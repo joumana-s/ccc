@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Image Gallery</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <h1>Image Gallery</h1>
+    
+    <div class="upload-section">
+        <h2>Upload New Images</h2>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" id="imageInput" accept="image/*" multiple>
+            <button type="submit">Upload Images</button>
+        </form>
+        <div id="uploadStatus"></div>
+    </div>
+
+    <div class="gallery" id="gallery">
+        <img src="/images/placeholder1.jpg" alt="Placeholder 1" data-filename="placeholder1.jpg">
+        <img src="/images/placeholder2.jpg" alt="Placeholder 2" data-filename="placeholder2.jpg">
+        <img src="/images/placeholder3.jpg" alt="Placeholder 3" data-filename="placeholder3.jpg">
+        <!-- Uploaded images will appear here -->
+    </div>
+
+    <!-- Resize Section -->
+    <div class="resize-section" id="resizeSection">
+        <h3>Resize Selected Image</h3>
+        <div class="resize-inputs">
+            <label>
+                Width: <input type="number" id="newWidth" placeholder="200" min="1" max="2000">
+            </label>
+            <label>
+                Height: <input type="number" id="newHeight" placeholder="300" min="1" max="2000">
+            </label>
+            <button id="resizeBtn">Resize Image</button>
+        </div>
+        <div id="resizeStatus"></div>
+        
+        <!-- Enhanced preview container -->
+        <div id="resizedImageContainer" style="display: none; margin-top: 20px; text-align: center;">
+            <h4>Resized Image Preview:</h4>
+            <div id="resizedImagePreview"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
