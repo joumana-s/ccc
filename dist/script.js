@@ -1,19 +1,8 @@
-// Types
-interface SelectedImageData {
-    filename: string;
-    src: string;
-}
-
-interface UploadedFile {
-    filename: string;
-    path: string;
-}
-
+"use strict";
 // Global state
-let selectedImageData: SelectedImageData | null = null;
-
+let selectedImageData = null;
 // Function to handle image selection
-function setupImageSelection(): void {
+function setupImageSelection() {
     console.debug('Setting up image selection...');
     const gallery = document.getElementById('gallery');
     if (!gallery) {
@@ -21,10 +10,9 @@ function setupImageSelection(): void {
         return;
     }
     console.debug('Gallery element found, attaching click listener');
-    
-    gallery.addEventListener('click', function(e: MouseEvent) {
+    gallery.addEventListener('click', function (e) {
         console.debug('Gallery clicked:', e.target);
-        const target = e.target as HTMLImageElement;
+        const target = e.target;
         if (target.tagName === 'IMG') {
             console.debug('Image clicked:', target.src);
             gallery.querySelectorAll('img').forEach(img => img.classList.remove('selected'));
@@ -34,23 +22,22 @@ function setupImageSelection(): void {
                 src: target.src
             };
             console.debug('Selected image data:', selectedImageData);
-            
             const resizeSection = document.getElementById('resizeSection');
             if (resizeSection) {
                 resizeSection.style.display = 'block';
                 console.debug('Resize section displayed');
-            } else {
+            }
+            else {
                 console.error('Resize section not found');
             }
-            
             const tempImg = new Image();
-            tempImg.onload = function() {
+            tempImg.onload = function () {
                 console.debug('Original image loaded, dimensions:', {
                     width: tempImg.naturalWidth,
                     height: tempImg.naturalHeight
                 });
-                const widthInput = document.getElementById('newWidth') as HTMLInputElement;
-                const heightInput = document.getElementById('newHeight') as HTMLInputElement;
+                const widthInput = document.getElementById('newWidth');
+                const heightInput = document.getElementById('newHeight');
                 if (widthInput && heightInput) {
                     widthInput.placeholder = tempImg.naturalWidth.toString();
                     heightInput.placeholder = tempImg.naturalHeight.toString();
@@ -58,7 +45,8 @@ function setupImageSelection(): void {
                         width: tempImg.naturalWidth,
                         height: tempImg.naturalHeight
                     });
-                } else {
+                }
+                else {
                     console.error('Width or height input not found');
                 }
             };
@@ -67,9 +55,8 @@ function setupImageSelection(): void {
     });
     console.debug('Image selection setup complete');
 }
-
 // Function to add image to gallery
-function addImageToGallery(file: UploadedFile): void {
+function addImageToGallery(file) {
     console.debug('Adding image to gallery:', file);
     const gallery = document.getElementById('gallery');
     if (!gallery) {
@@ -83,13 +70,12 @@ function addImageToGallery(file: UploadedFile): void {
     gallery.appendChild(img);
     console.debug('Image added to gallery successfully');
 }
-
 // Function to handle copying URLs to clipboard
-function copyToClipboard(text: string, event: MouseEvent): void {
+function copyToClipboard(text, event) {
     console.debug('Attempting to copy to clipboard:', text);
-    navigator.clipboard.writeText(text).then(function() {
+    navigator.clipboard.writeText(text).then(function () {
         console.debug('Successfully copied to clipboard');
-        const button = event.target as HTMLButtonElement;
+        const button = event.target;
         const originalText = button.textContent;
         if (originalText) {
             button.textContent = '✅ Copied!';
@@ -100,7 +86,7 @@ function copyToClipboard(text: string, event: MouseEvent): void {
                 console.debug('Button state reset');
             }, 2000);
         }
-    }).catch(function(err) {
+    }).catch(function (err) {
         console.error('Failed to copy to clipboard:', err);
         console.debug('Falling back to execCommand method');
         const textArea = document.createElement('textarea');
@@ -112,9 +98,8 @@ function copyToClipboard(text: string, event: MouseEvent): void {
         alert('URL copied to clipboard!');
     });
 }
-
 // Function to handle image resizing with shareable URLs
-function setupImageResize(): void {
+function setupImageResize() {
     console.debug('Setting up image resize functionality...');
     const resizeBtn = document.getElementById('resizeBtn');
     const resizeStatus = document.getElementById('resizeStatus');
@@ -122,8 +107,7 @@ function setupImageResize(): void {
         console.error('Resize button or status element not found');
         return;
     }
-    
-    resizeBtn.addEventListener('click', async function() {
+    resizeBtn.addEventListener('click', async function () {
         console.debug('Resize button clicked');
         if (!selectedImageData) {
             console.warn('No image selected for resize');
@@ -131,34 +115,29 @@ function setupImageResize(): void {
             resizeStatus.style.color = 'red';
             return;
         }
-        
-        const widthInput = document.getElementById('newWidth') as HTMLInputElement;
-        const heightInput = document.getElementById('newHeight') as HTMLInputElement;
+        const widthInput = document.getElementById('newWidth');
+        const heightInput = document.getElementById('newHeight');
         if (!widthInput || !heightInput) {
             console.error('Width or height input not found');
             return;
         }
-        
         const newWidth = parseInt(widthInput.value);
         const newHeight = parseInt(heightInput.value);
         console.debug('Resize dimensions:', { width: newWidth, height: newHeight });
-        
         if (isNaN(newWidth) || isNaN(newHeight) || newWidth <= 0 || newHeight <= 0) {
             console.warn('Invalid dimensions provided');
             resizeStatus.textContent = 'Please enter valid width and height';
             resizeStatus.style.color = 'red';
             return;
         }
-        
         try {
             resizeStatus.textContent = 'Resizing image...';
             resizeStatus.style.color = 'blue';
             const baseUrl = window.location.origin;
             const imageUrl = `${baseUrl}/api/resize-image?src=${selectedImageData.filename}&width=${newWidth}&height=${newHeight}`;
             console.debug('Generated resize URL:', imageUrl);
-            
             const testImg = new Image();
-            testImg.onload = function() {
+            testImg.onload = function () {
                 console.debug('Resized image loaded successfully');
                 resizeStatus.innerHTML = `
                     <div style="color: green; margin-bottom: 15px;">
@@ -179,14 +158,12 @@ function setupImageResize(): void {
                         </div>
                     </div>
                 `;
-                
                 const resizedContainer = document.getElementById('resizedImageContainer');
                 const resizedPreview = document.getElementById('resizedImagePreview');
                 if (!resizedContainer || !resizedPreview) {
                     console.error('Resized container or preview not found');
                     return;
                 }
-                
                 console.debug('Creating resized image preview');
                 resizedPreview.innerHTML = '';
                 const img = document.createElement('img');
@@ -199,21 +176,18 @@ function setupImageResize(): void {
                 resizedPreview.appendChild(img);
                 resizedContainer.style.display = 'block';
                 console.debug('Resized image preview created');
-                
                 widthInput.value = '';
                 heightInput.value = '';
             };
-            
-            testImg.onerror = function() {
+            testImg.onerror = function () {
                 console.error('Failed to load resized image');
                 resizeStatus.textContent = 'Failed to create resized image. Make sure the backend endpoint is running.';
                 resizeStatus.style.color = 'red';
             };
-            
             console.debug('Loading resized image...');
             testImg.src = imageUrl;
-            
-        } catch (error) {
+        }
+        catch (error) {
             console.error('Resize error:', error);
             resizeStatus.textContent = 'Resize failed: ' + (error instanceof Error ? error.message : String(error));
             resizeStatus.style.color = 'red';
@@ -221,64 +195,56 @@ function setupImageResize(): void {
     });
     console.debug('Image resize setup complete');
 }
-
 // Upload form handler
 const uploadForm = document.getElementById('uploadForm');
 if (uploadForm) {
     console.debug('Setting up upload form handler...');
-    uploadForm.addEventListener('submit', async function(e: Event) {
+    uploadForm.addEventListener('submit', async function (e) {
         e.preventDefault();
         console.debug('Upload form submitted');
-        
-        const fileInput = document.getElementById('imageInput') as HTMLInputElement;
+        const fileInput = document.getElementById('imageInput');
         const statusDiv = document.getElementById('uploadStatus');
         if (!fileInput || !statusDiv || !fileInput.files) {
             console.error('File input or status div not found');
             return;
         }
-        
         const files = fileInput.files;
         console.debug('Files selected:', files.length);
-        
         if (files.length === 0) {
             console.warn('No files selected');
             statusDiv.textContent = 'Please select at least one image';
             statusDiv.style.color = 'red';
             return;
         }
-        
         const formData = new FormData();
         for (let i = 0; i < files.length; i++) {
             formData.append('images', files[i]);
             console.debug('Added file to form data:', files[i].name);
         }
-        
         try {
             statusDiv.textContent = 'Uploading...';
             statusDiv.style.color = 'blue';
             console.debug('Sending upload request...');
-            
             const response = await fetch('/upload', {
                 method: 'POST',
                 body: formData
             });
-            
             if (response.ok) {
                 const result = await response.json();
                 console.debug('Upload successful:', result);
                 statusDiv.textContent = `${result.files.length} image(s) uploaded successfully!`;
                 statusDiv.style.color = 'green';
-                
-                result.files.forEach((file: UploadedFile) => {
+                result.files.forEach((file) => {
                     addImageToGallery(file);
                 });
-                
                 fileInput.value = '';
                 console.debug('Upload process completed');
-            } else {
+            }
+            else {
                 throw new Error('Upload failed');
             }
-        } catch (error) {
+        }
+        catch (error) {
             console.error('Upload error:', error);
             statusDiv.textContent = 'Upload failed: ' + (error instanceof Error ? error.message : String(error));
             statusDiv.style.color = 'red';
@@ -286,26 +252,19 @@ if (uploadForm) {
     });
     console.debug('Upload form handler setup complete');
 }
-
 // Initialize when page loads
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.debug('DOM Content Loaded - Initializing Image Gallery App...');
-    
     // Debug gallery initialization
     const gallery = document.getElementById('gallery');
     if (gallery) {
         console.debug('Gallery element found:', gallery);
         console.debug('Current gallery content:', gallery.innerHTML);
-    } else {
+    }
+    else {
         console.error('Gallery element not found during initialization');
     }
-    
     setupImageSelection();
     setupImageResize();
     console.debug('Image Gallery App Initialized');
 });
-
-// Simple function for unit testing
-export function add(a: number, b: number): number {
-    return a + b;
-} 

@@ -1,4 +1,3 @@
-"use strict";
 // Global state
 let selectedImageData = null;
 // Function to handle image selection
@@ -268,3 +267,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setupImageResize();
     console.debug('Image Gallery App Initialized');
 });
+// Simple function for unit testing
+export function add(a, b) {
+    return a + b;
+}

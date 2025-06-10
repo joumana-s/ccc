@@ -56,6 +56,13 @@ app.post('/upload', upload.array('images', 10), (req, res) => {
     }
     const files = req.files;
     console.log(`Uploaded ${files.length} files:`, files.map(f => f.filename));
+    // Copy each uploaded file to dist/public/images
+    files.forEach(file => {
+        const src = path_1.default.join('public/images', file.filename);
+        const dest = path_1.default.join('dist/public/images', file.filename);
+        fs_1.default.mkdirSync(path_1.default.dirname(dest), { recursive: true });
+        fs_1.default.copyFileSync(src, dest);
+    });
     res.json({
         message: 'Files uploaded successfully',
         files: files.map(file => ({
