@@ -10,7 +10,10 @@ const path_1 = __importDefault(require("path"));
 const router = express_1.default.Router();
 const storage = multer_1.default.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, path_1.default.join(__dirname, '../../public/images'));
+        const uploadPath = path_1.default.resolve(process.cwd(), 'public', 'images');
+        // Ensure the upload directory exists
+        require('fs').mkdirSync(uploadPath, { recursive: true });
+        cb(null, uploadPath);
     },
     filename: function (req, file, cb) {
         const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + path_1.default.extname(file.originalname);

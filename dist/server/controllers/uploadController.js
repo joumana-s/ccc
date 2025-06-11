@@ -7,23 +7,55 @@ exports.uploadHandler = uploadHandler;
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 function uploadHandler(req, res) {
-    if (!req.files || req.files.length === 0) {
+    console.log('Upload handler called');
+    console.log('Request files:', req.files);
+    console.log('Request body:', req.body);
+    if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
+        console.error('No files in request or invalid files array');
         return res.status(400).json({ error: 'No files uploaded' });
     }
     const files = req.files;
-    console.log(`Uploaded ${files.length} files:`, files.map(f => f.filename));
-    // Copy each uploaded file to dist/public/images
-    files.forEach(file => {
-        const src = path_1.default.join('public/images', file.filename);
-        const dest = path_1.default.join('dist/public/images', file.filename);
-        fs_1.default.mkdirSync(path_1.default.dirname(dest), { recursive: true });
-        fs_1.default.copyFileSync(src, dest);
-    });
-    res.json({
-        message: 'Files uploaded successfully',
-        files: files.map(file => ({
-            filename: file.filename,
-            path: `/images/${file.filename}`
-        }))
-    });
+    console.log(`Processing ${files.length} files:`, files.map(f => ({
+        filename: f.filename,
+        originalname: f.originalname,
+        size: f.size,
+        mimetype: f.mimetype
+    })));
+    try {
+        // Copy each uploaded file to dist/public/images
+        files.forEach(file => {
+            const src = path_1.default.resolve(process.cwd(), 'public', 'images', file.filename);
+            const dest = path_1.default.resolve(process.cwd(), 'dist', 'public', 'images', file.filename);
+            console.log('File paths:', {
+                src: src,
+                dest: dest,
+                srcExists: fs_1.default.existsSync(src),
+                destDirExists: fs_1.default.existsSync(path_1.default.dirname(dest))
+            });
+            // Ensure the destination directory exists
+            fs_1.default.mkdirSync(path_1.default.dirname(dest), { recursive: true });
+            // Copy the file
+            fs_1.default.copyFileSync(src, dest);
+            console.log(`Successfully copied file from ${src} to ${dest}`);
+        });
+        const response = {
+            message: 'Files uploaded successfully',
+            files: files.map(file => ({
+                filename: file.filename,
+                path: `/images/${file.filename}`
+            }))
+        };
+        console.log('Sending success response:', response);
+        res.json(response);
+    }
+    catch (error) {
+        console.error('Error in upload handler:', error);
+        if (error instanceof Error) {
+            console.error('Stack trace:', error.stack);
+        }
+        res.status(500).json({
+            error: 'Failed to process uploaded files',
+            details: error instanceof Error ? error.message : String(error)
+        });
+    }
 }
