@@ -11,7 +11,7 @@ const app = express();
 app.use(express.json());
 
 // Create images directory if it doesn't exist
-const imagesDir = path.join(__dirname, '../public/images');
+const imagesDir = path.resolve(process.cwd(), 'public', 'images');
 const resizedDir = path.join(imagesDir, 'resized');
 if (!fs.existsSync(imagesDir)) {
     fs.mkdirSync(imagesDir, { recursive: true });
@@ -43,8 +43,12 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
         if (error.code === 'LIMIT_FILE_COUNT') {
             return res.status(400).json({ error: 'Too many files. Maximum is 10 files.' });
         }
+        return res.status(400).json({ error: `Upload error: ${error.message}` });
     }
-    res.status(500).json({ error: error.message });
+
+    res.status(500).json({ 
+        error: 'Internal server error'
+    });
 });
 
 export default app; 
