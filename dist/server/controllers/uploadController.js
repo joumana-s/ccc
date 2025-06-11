@@ -46,14 +46,14 @@ function uploadHandler(req, res) {
             })),
         };
         // console.log('Sending success response:', response);
-        res.json(response);
+        return res.json(response);
     }
     catch (error) {
         console.error('Error in upload handler:', error);
         if (error instanceof Error) {
             console.error('Stack trace:', error.stack);
         }
-        res.status(500).json({
+        return res.status(500).json({
             error: 'Failed to process uploaded files',
         });
     }

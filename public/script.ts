@@ -12,24 +12,23 @@ interface UploadedFile {
 // Global state
 let selectedImageData: SelectedImageData | null = null;
 
-// Function to handle image selection
 function setupImageSelection(): void {
   console.debug('Setting up image selection...');
-  const gallery = document.getElementById('gallery');
+  const gallery: HTMLElement | null = document.getElementById('gallery');
   if (!gallery) {
     console.error('Gallery element not found');
     return;
   }
   console.debug('Gallery element found, attaching click listener');
 
-  gallery.addEventListener('click', function (e: MouseEvent) {
+  gallery.addEventListener('click', function (e: MouseEvent): void {
     console.debug('Gallery clicked:', e.target);
     const target = e.target as HTMLImageElement;
     if (target.tagName === 'IMG') {
       console.debug('Image clicked:', target.src);
       gallery
         .querySelectorAll('img')
-        .forEach((img) => img.classList.remove('selected'));
+        .forEach((img: HTMLImageElement) => img.classList.remove('selected'));
       target.classList.add('selected');
       selectedImageData = {
         filename: target.dataset.filename || target.alt,
@@ -37,7 +36,7 @@ function setupImageSelection(): void {
       };
       console.debug('Selected image data:', selectedImageData);
 
-      const resizeSection = document.getElementById('resizeSection');
+      const resizeSection: HTMLElement | null = document.getElementById('resizeSection');
       if (resizeSection) {
         resizeSection.style.display = 'block';
         console.debug('Resize section displayed');
@@ -46,7 +45,7 @@ function setupImageSelection(): void {
       }
 
       const tempImg = new Image();
-      tempImg.onload = function () {
+      tempImg.onload = function (): void {
         console.debug('Original image loaded, dimensions:', {
           width: tempImg.naturalWidth,
           height: tempImg.naturalHeight,
@@ -74,7 +73,6 @@ function setupImageSelection(): void {
   console.debug('Image selection setup complete');
 }
 
-// Function to add image to gallery
 function addImageToGallery(file: UploadedFile): void {
   console.debug('Adding image to gallery:', file);
   const gallery = document.getElementById('gallery');
@@ -95,30 +93,22 @@ function copyToClipboard(text: string, event: MouseEvent): void {
   console.debug('Attempting to copy to clipboard:', text);
   navigator.clipboard
     .writeText(text)
-    .then(function () {
+    .then(function (): void {
       console.debug('Successfully copied to clipboard');
       const button = event.target as HTMLButtonElement;
       const originalText = button.textContent;
       if (originalText) {
         button.textContent = '✅ Copied!';
         button.style.background = '#28a745';
-        setTimeout(() => {
+        setTimeout((): void => {
           button.textContent = originalText;
           button.style.background = '#007bff';
           console.debug('Button state reset');
         }, 2000);
       }
     })
-    .catch(function (err) {
+    .catch(function (err: unknown): void {
       console.error('Failed to copy to clipboard:', err);
-      console.debug('Falling back to execCommand method');
-      const textArea = document.createElement('textarea');
-      textArea.value = text;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-      alert('URL copied to clipboard!');
     });
 }
 
@@ -132,7 +122,7 @@ function setupImageResize(): void {
     return;
   }
 
-  resizeBtn.addEventListener('click', async function () {
+  resizeBtn.addEventListener('click', async function (): Promise<void> {
     console.debug('Resize button clicked');
     if (!selectedImageData) {
       console.warn('No image selected for resize');
@@ -174,7 +164,7 @@ function setupImageResize(): void {
       console.debug('Generated resize URL:', imageUrl);
 
       const testImg = new Image();
-      testImg.onload = function () {
+      testImg.onload = function (): void {
         console.debug('Resized image loaded successfully');
         resizeStatus.innerHTML = `
                     <div style="color: green; margin-bottom: 15px;">
@@ -222,7 +212,7 @@ function setupImageResize(): void {
         heightInput.value = '';
       };
 
-      testImg.onerror = function () {
+      testImg.onerror = function (): void {
         console.error('Failed to load resized image');
         resizeStatus.textContent =
           'Failed to create resized image. Make sure the backend endpoint is running.';
@@ -246,7 +236,7 @@ function setupImageResize(): void {
 const uploadForm = document.getElementById('uploadForm');
 if (uploadForm) {
   console.debug('Setting up upload form handler...');
-  uploadForm.addEventListener('submit', async function (e: Event) {
+  uploadForm.addEventListener('submit', async function (e: Event): Promise<void> {
     e.preventDefault();
     console.debug('Upload form submitted');
 
@@ -310,7 +300,7 @@ if (uploadForm) {
 }
 
 // Initialize when page loads
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function (): void {
   console.debug('DOM Content Loaded - Initializing Image Gallery App...');
 
   // Debug gallery initialization

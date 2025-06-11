@@ -11,12 +11,12 @@ export interface MockResponse {
 }
 
 export const createMockResponse = (): MockResponse => {
-  const statusSpy = jasmine.createSpy('status');
-  const jsonSpy = jasmine.createSpy('json');
-  const sendFileSpy = jasmine.createSpy('sendFile');
-  const setHeaderSpy = jasmine.createSpy('setHeader');
+  const statusSpy: Spy = jasmine.createSpy('status');
+  const jsonSpy: Spy = jasmine.createSpy('json');
+  const sendFileSpy: Spy = jasmine.createSpy('sendFile');
+  const setHeaderSpy: Spy = jasmine.createSpy('setHeader');
 
-  const res = {
+  const res: Partial<Response> = {
     status: statusSpy,
     json: jsonSpy,
     sendFile: sendFileSpy,
@@ -49,13 +49,13 @@ export const createMockFs = (): MockFs => {
 };
 
 export interface SharpMock {
-  resize: jasmine.Spy;
-  jpeg: jasmine.Spy;
-  toFile: jasmine.Spy;
-  calls?: jasmine.Calls<jasmine.Spy>;
+  resize: Spy;
+  jpeg: Spy;
+  toFile: Spy;
+  calls?: jasmine.Calls<Spy>;
 }
 
-export interface SharpSpy extends jasmine.Spy {
+export interface SharpSpy extends Spy {
   reset: () => void;
   instance: SharpMock;
 }
@@ -73,10 +73,10 @@ export const createMockSharp = (): SharpSpy => {
   sharpInstance.toFile.and.returnValue(Promise.resolve());
 
   // Create the main sharp spy that returns the instance
-  const sharpSpy = jasmine.createSpy('sharp').and.returnValue(sharpInstance);
+  const sharpSpy: Spy = jasmine.createSpy('sharp').and.returnValue(sharpInstance);
 
   // Add reset functionality
-  const resetAllSpies = () => {
+  const resetAllSpies = (): void => {
     sharpSpy.calls.reset();
     sharpInstance.resize.calls.reset();
     sharpInstance.jpeg.calls.reset();
@@ -105,10 +105,10 @@ export const createFailingMockSharp = (
   sharpInstance.toFile.and.returnValue(Promise.reject(error));
 
   // Create the main sharp spy that returns the instance
-  const sharpSpy = jasmine.createSpy('sharp').and.returnValue(sharpInstance);
+  const sharpSpy: Spy = jasmine.createSpy('sharp').and.returnValue(sharpInstance);
 
   // Add reset functionality
-  const resetAllSpies = () => {
+  const resetAllSpies = (): void => {
     sharpSpy.calls.reset();
     sharpInstance.resize.calls.reset();
     sharpInstance.jpeg.calls.reset();

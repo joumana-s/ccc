@@ -4,8 +4,8 @@ import fs from 'fs';
 import sharp from 'sharp';
 
 const validateDimensions = (width: string, height: string): boolean => {
-  const w = parseInt(width);
-  const h = parseInt(height);
+  const w: number = parseInt(width);
+  const h: number = parseInt(height);
   return !isNaN(w) && !isNaN(h) && w > 0 && h > 0;
 };
 
@@ -19,32 +19,33 @@ const ensureResizedDirectory = (dirPath: string): void => {
   }
 };
 
-export async function resizeHandler(req: Request, res: Response) {
+export async function resizeHandler(req: Request, res: Response): Promise<void> {
   try {
     const { filename, width, height } = req.body;
 
     // Validate required parameters
     if (!filename || !width || !height) {
-      return res
-        .status(400)
-        .json({ error: 'Missing filename, width, or height' });
+      res.status(400).json({ error: 'Missing filename, width, or height' });
+      return;
     }
 
     // Validate dimensions
     if (!validateDimensions(width, height)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid dimensions. Width and height must be positive numbers.',
       });
+      return;
     }
 
-    const originalPath = path.join(process.cwd(), 'public/images', filename);
-    const resizedFilename = `resized-${width}x${height}-${filename}`;
-    const resizedDir = path.join(process.cwd(), 'public/images/resized');
-    const resizedPath = path.join(resizedDir, resizedFilename);
+    const originalPath: string = path.join(process.cwd(), 'public/images', filename);
+    const resizedFilename: string = `resized-${width}x${height}-${filename}`;
+    const resizedDir: string = path.join(process.cwd(), 'public/images/resized');
+    const resizedPath: string = path.join(resizedDir, resizedFilename);
 
     // Check if original file exists
     if (!fs.existsSync(originalPath)) {
-      return res.status(404).json({ error: 'Original image not found' });
+      res.status(404).json({ error: 'Original image not found' });
+      return;
     }
 
     // Ensure resized directory exists
@@ -52,9 +53,8 @@ export async function resizeHandler(req: Request, res: Response) {
       ensureResizedDirectory(resizedDir);
     } catch (error) {
       console.error('Directory creation error:', error);
-      return res
-        .status(500)
-        .json({ error: 'Failed to create resized directory' });
+      res.status(500).json({ error: 'Failed to create resized directory' });
+      return;
     }
 
     // Resize image
@@ -76,40 +76,44 @@ export async function resizeHandler(req: Request, res: Response) {
   }
 }
 
-export async function apiResizeHandler(req: Request, res: Response) {
+export async function apiResizeHandler(req: Request, res: Response): Promise<void> {
   try {
     const { src, width, height } = req.query;
 
     // Validate required parameters
     if (!src || !width || !height) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Missing required parameters: src, width, height',
       });
+      return;
     }
 
     // Validate dimensions
     if (!validateDimensions(width as string, height as string)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid dimensions. Width and height must be positive numbers.',
       });
+      return;
     }
 
-    const filename = path.basename(src as string);
-    const originalPath = path.join(process.cwd(), 'public/images', filename);
-    const resizedFilename = `resized-${width}x${height}-${filename}`;
-    const resizedDir = path.join(process.cwd(), 'public/images/resized');
-    const resizedPath = path.join(resizedDir, resizedFilename);
+    const filename: string = path.basename(src as string);
+    const originalPath: string = path.join(process.cwd(), 'public/images', filename);
+    const resizedFilename: string = `resized-${width}x${height}-${filename}`;
+    const resizedDir: string = path.join(process.cwd(), 'public/images/resized');
+    const resizedPath: string = path.join(resizedDir, resizedFilename);
 
     // Check if original file exists
     if (!fs.existsSync(originalPath)) {
-      return res.status(404).json({ error: 'Original image not found' });
+      res.status(404).json({ error: 'Original image not found' });
+      return;
     }
 
     // Check if resized version exists
     if (fs.existsSync(resizedPath)) {
       res.setHeader('Content-Type', 'image/jpeg');
       res.setHeader('Cache-Control', 'public, max-age=31536000');
-      return res.sendFile(resizedPath);
+      res.sendFile(resizedPath);
+      return;
     }
 
     // Ensure resized directory exists
@@ -117,9 +121,8 @@ export async function apiResizeHandler(req: Request, res: Response) {
       ensureResizedDirectory(resizedDir);
     } catch (error) {
       console.error('Directory creation error:', error);
-      return res
-        .status(500)
-        .json({ error: 'Failed to create resized directory' });
+      res.status(500).json({ error: 'Failed to create resized directory' });
+      return;
     }
 
     // Create resized version

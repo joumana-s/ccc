@@ -6,32 +6,32 @@ export interface SharpInstance {
   toFile: (path: string) => Promise<void>;
 }
 
-export function createMockSharp(): Spy {
-  const mockToFile = jasmine
+export function createMockSharp(): jasmine.Spy {
+  const mockToFile: jasmine.Spy = jasmine
     .createSpy('toFile')
     .and.returnValue(Promise.resolve());
 
   const mockInstance: SharpInstance = {
-    resize: jasmine.createSpy('resize').and.callFake(() => mockInstance),
-    jpeg: jasmine.createSpy('jpeg').and.callFake(() => mockInstance),
+    resize: jasmine.createSpy('resize').and.callFake((): SharpInstance => mockInstance),
+    jpeg: jasmine.createSpy('jpeg').and.callFake((): SharpInstance => mockInstance),
     toFile: mockToFile,
   };
 
-  const sharpSpy = jasmine.createSpy('sharp').and.returnValue(mockInstance);
+  const sharpSpy: jasmine.Spy = jasmine.createSpy('sharp').and.returnValue(mockInstance);
   return sharpSpy;
 }
 
-export function createFailingMockSharp(error: Error): Spy {
-  const mockToFile = jasmine
+export function createFailingMockSharp(error: Error): jasmine.Spy {
+  const mockToFile: jasmine.Spy = jasmine
     .createSpy('toFile')
     .and.returnValue(Promise.reject(error));
 
   const mockInstance: SharpInstance = {
-    resize: jasmine.createSpy('resize').and.callFake(() => mockInstance),
-    jpeg: jasmine.createSpy('jpeg').and.callFake(() => mockInstance),
+    resize: jasmine.createSpy('resize').and.callFake((): SharpInstance => mockInstance),
+    jpeg: jasmine.createSpy('jpeg').and.callFake((): SharpInstance => mockInstance),
     toFile: mockToFile,
   };
 
-  const sharpSpy = jasmine.createSpy('sharp').and.returnValue(mockInstance);
+  const sharpSpy: jasmine.Spy = jasmine.createSpy('sharp').and.returnValue(mockInstance);
   return sharpSpy;
 }

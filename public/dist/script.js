@@ -1,6 +1,5 @@
 // Global state
 let selectedImageData = null;
-// Function to handle image selection
 function setupImageSelection() {
     console.debug('Setting up image selection...');
     const gallery = document.getElementById('gallery');
@@ -56,7 +55,6 @@ function setupImageSelection() {
     });
     console.debug('Image selection setup complete');
 }
-// Function to add image to gallery
 function addImageToGallery(file) {
     console.debug('Adding image to gallery:', file);
     const gallery = document.getElementById('gallery');
@@ -92,14 +90,6 @@ function copyToClipboard(text, event) {
     })
         .catch(function (err) {
         console.error('Failed to copy to clipboard:', err);
-        console.debug('Falling back to execCommand method');
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        alert('URL copied to clipboard!');
     });
 }
 // Function to handle image resizing with shareable URLs

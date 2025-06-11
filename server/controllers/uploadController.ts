@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
 
-export function uploadHandler(req: Request, res: Response) {
+export function uploadHandler(req: Request, res: Response): Response {
   // console.log('Upload handler called');
   // console.log('Request files:', req.files);
   // console.log('Request body:', req.body);
@@ -60,13 +60,13 @@ export function uploadHandler(req: Request, res: Response) {
       })),
     };
     // console.log('Sending success response:', response);
-    res.json(response);
+    return res.json(response);
   } catch (error) {
     console.error('Error in upload handler:', error);
     if (error instanceof Error) {
       console.error('Stack trace:', error.stack);
     }
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Failed to process uploaded files',
     });
   }

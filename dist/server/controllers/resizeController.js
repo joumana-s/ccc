@@ -28,15 +28,15 @@ async function resizeHandler(req, res) {
         const { filename, width, height } = req.body;
         // Validate required parameters
         if (!filename || !width || !height) {
-            return res
-                .status(400)
-                .json({ error: 'Missing filename, width, or height' });
+            res.status(400).json({ error: 'Missing filename, width, or height' });
+            return;
         }
         // Validate dimensions
         if (!validateDimensions(width, height)) {
-            return res.status(400).json({
+            res.status(400).json({
                 error: 'Invalid dimensions. Width and height must be positive numbers.',
             });
+            return;
         }
         const originalPath = path_1.default.join(process.cwd(), 'public/images', filename);
         const resizedFilename = `resized-${width}x${height}-${filename}`;
@@ -44,7 +44,8 @@ async function resizeHandler(req, res) {
         const resizedPath = path_1.default.join(resizedDir, resizedFilename);
         // Check if original file exists
         if (!fs_1.default.existsSync(originalPath)) {
-            return res.status(404).json({ error: 'Original image not found' });
+            res.status(404).json({ error: 'Original image not found' });
+            return;
         }
         // Ensure resized directory exists
         try {
@@ -52,9 +53,8 @@ async function resizeHandler(req, res) {
         }
         catch (error) {
             console.error('Directory creation error:', error);
-            return res
-                .status(500)
-                .json({ error: 'Failed to create resized directory' });
+            res.status(500).json({ error: 'Failed to create resized directory' });
+            return;
         }
         // Resize image
         await (0, sharp_1.default)(originalPath)
@@ -78,15 +78,17 @@ async function apiResizeHandler(req, res) {
         const { src, width, height } = req.query;
         // Validate required parameters
         if (!src || !width || !height) {
-            return res.status(400).json({
+            res.status(400).json({
                 error: 'Missing required parameters: src, width, height',
             });
+            return;
         }
         // Validate dimensions
         if (!validateDimensions(width, height)) {
-            return res.status(400).json({
+            res.status(400).json({
                 error: 'Invalid dimensions. Width and height must be positive numbers.',
             });
+            return;
         }
         const filename = path_1.default.basename(src);
         const originalPath = path_1.default.join(process.cwd(), 'public/images', filename);
@@ -95,13 +97,15 @@ async function apiResizeHandler(req, res) {
         const resizedPath = path_1.default.join(resizedDir, resizedFilename);
         // Check if original file exists
         if (!fs_1.default.existsSync(originalPath)) {
-            return res.status(404).json({ error: 'Original image not found' });
+            res.status(404).json({ error: 'Original image not found' });
+            return;
         }
         // Check if resized version exists
         if (fs_1.default.existsSync(resizedPath)) {
             res.setHeader('Content-Type', 'image/jpeg');
             res.setHeader('Cache-Control', 'public, max-age=31536000');
-            return res.sendFile(resizedPath);
+            res.sendFile(resizedPath);
+            return;
         }
         // Ensure resized directory exists
         try {
@@ -109,9 +113,8 @@ async function apiResizeHandler(req, res) {
         }
         catch (error) {
             console.error('Directory creation error:', error);
-            return res
-                .status(500)
-                .json({ error: 'Failed to create resized directory' });
+            res.status(500).json({ error: 'Failed to create resized directory' });
+            return;
         }
         // Create resized version
         await (0, sharp_1.default)(originalPath)

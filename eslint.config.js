@@ -34,6 +34,8 @@ module.exports = [
       'no-unused-vars': 'warn',
       'no-undef': 'off',
       'no-console': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'error',
+      '@typescript-eslint/explicit-module-boundary-types': 'error',
     },
   },
   {
@@ -49,6 +51,13 @@ module.exports = [
         beforeEach: 'readonly',
         afterEach: 'readonly',
       },
+    },
+  },
+  {
+    files: ['dist/**/*.js', 'public/dist/**/*.js'],
+    rules: {
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
     },
   },
 ];
