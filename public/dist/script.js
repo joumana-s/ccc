@@ -14,11 +14,13 @@ function setupImageSelection() {
         const target = e.target;
         if (target.tagName === 'IMG') {
             console.debug('Image clicked:', target.src);
-            gallery.querySelectorAll('img').forEach(img => img.classList.remove('selected'));
+            gallery
+                .querySelectorAll('img')
+                .forEach((img) => img.classList.remove('selected'));
             target.classList.add('selected');
             selectedImageData = {
                 filename: target.dataset.filename || target.alt,
-                src: target.src
+                src: target.src,
             };
             console.debug('Selected image data:', selectedImageData);
             const resizeSection = document.getElementById('resizeSection');
@@ -33,7 +35,7 @@ function setupImageSelection() {
             tempImg.onload = function () {
                 console.debug('Original image loaded, dimensions:', {
                     width: tempImg.naturalWidth,
-                    height: tempImg.naturalHeight
+                    height: tempImg.naturalHeight,
                 });
                 const widthInput = document.getElementById('newWidth');
                 const heightInput = document.getElementById('newHeight');
@@ -42,7 +44,7 @@ function setupImageSelection() {
                     heightInput.placeholder = tempImg.naturalHeight.toString();
                     console.debug('Set placeholder dimensions:', {
                         width: tempImg.naturalWidth,
-                        height: tempImg.naturalHeight
+                        height: tempImg.naturalHeight,
                     });
                 }
                 else {
@@ -72,7 +74,9 @@ function addImageToGallery(file) {
 // Function to handle copying URLs to clipboard
 function copyToClipboard(text, event) {
     console.debug('Attempting to copy to clipboard:', text);
-    navigator.clipboard.writeText(text).then(function () {
+    navigator.clipboard
+        .writeText(text)
+        .then(function () {
         console.debug('Successfully copied to clipboard');
         const button = event.target;
         const originalText = button.textContent;
@@ -85,7 +89,8 @@ function copyToClipboard(text, event) {
                 console.debug('Button state reset');
             }, 2000);
         }
-    }).catch(function (err) {
+    })
+        .catch(function (err) {
         console.error('Failed to copy to clipboard:', err);
         console.debug('Falling back to execCommand method');
         const textArea = document.createElement('textarea');
@@ -123,7 +128,10 @@ function setupImageResize() {
         const newWidth = parseInt(widthInput.value);
         const newHeight = parseInt(heightInput.value);
         console.debug('Resize dimensions:', { width: newWidth, height: newHeight });
-        if (isNaN(newWidth) || isNaN(newHeight) || newWidth <= 0 || newHeight <= 0) {
+        if (isNaN(newWidth) ||
+            isNaN(newHeight) ||
+            newWidth <= 0 ||
+            newHeight <= 0) {
             console.warn('Invalid dimensions provided');
             resizeStatus.textContent = 'Please enter valid width and height';
             resizeStatus.style.color = 'red';
@@ -180,7 +188,8 @@ function setupImageResize() {
             };
             testImg.onerror = function () {
                 console.error('Failed to load resized image');
-                resizeStatus.textContent = 'Failed to create resized image. Make sure the backend endpoint is running.';
+                resizeStatus.textContent =
+                    'Failed to create resized image. Make sure the backend endpoint is running.';
                 resizeStatus.style.color = 'red';
             };
             console.debug('Loading resized image...');
@@ -188,7 +197,9 @@ function setupImageResize() {
         }
         catch (error) {
             console.error('Resize error:', error);
-            resizeStatus.textContent = 'Resize failed: ' + (error instanceof Error ? error.message : String(error));
+            resizeStatus.textContent =
+                'Resize failed: ' +
+                    (error instanceof Error ? error.message : String(error));
             resizeStatus.style.color = 'red';
         }
     });
@@ -226,7 +237,7 @@ if (uploadForm) {
             console.debug('Sending upload request...');
             const response = await fetch('/upload', {
                 method: 'POST',
-                body: formData
+                body: formData,
             });
             if (response.ok) {
                 const result = await response.json();
@@ -245,7 +256,9 @@ if (uploadForm) {
         }
         catch (error) {
             console.error('Upload error:', error);
-            statusDiv.textContent = 'Upload failed: ' + (error instanceof Error ? error.message : String(error));
+            statusDiv.textContent =
+                'Upload failed: ' +
+                    (error instanceof Error ? error.message : String(error));
             statusDiv.style.color = 'red';
         }
     });

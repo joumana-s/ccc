@@ -11,12 +11,6 @@
     "moduleResolution": "node",
     "lib": ["ES2020", "DOM", "DOM.Iterable"]
   },
-  "include": [
-    "public/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "server"
-  ]
-} 
+  "include": ["public/**/*.ts"],
+  "exclude": ["node_modules", "dist", "server"]
+}

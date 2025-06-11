@@ -16,9 +16,12 @@ const storage = multer_1.default.diskStorage({
         cb(null, uploadPath);
     },
     filename: function (req, file, cb) {
-        const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + path_1.default.extname(file.originalname);
+        const uniqueName = Date.now() +
+            '-' +
+            Math.round(Math.random() * 1e9) +
+            path_1.default.extname(file.originalname);
         cb(null, uniqueName);
-    }
+    },
 });
 const upload = (0, multer_1.default)({
     storage: storage,
@@ -31,8 +34,8 @@ const upload = (0, multer_1.default)({
         }
     },
     limits: {
-        fileSize: 5 * 1024 * 1024 // 5MB limit
-    }
+        fileSize: 5 * 1024 * 1024, // 5MB limit
+    },
 });
 router.post('/upload', upload.array('images', 10), uploadController_1.uploadHandler);
 exports.default = router;
